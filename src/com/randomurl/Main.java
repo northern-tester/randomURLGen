@@ -15,10 +15,12 @@ public class Main {
     public static PrintWriter printLine;
     public static FileWriter write;
 
-    public Main() {
-    }
-
     public static void main(String[] args) throws IOException {
+        if ((args == null) || (args.length == 0))
+        {
+            System.out.println("Correct use is java -jar jarname URL(s) Output File Name Number of URLs Max Integer to Append");
+            System.exit(0);
+        }
         URL = args[0];
         outputFileName = args[1];
         iterations = Integer.parseInt(args[2]);
@@ -30,6 +32,18 @@ public class Main {
         printLine.close();
     }
 
+    private static String checkURLFormat(String arg) {
+        //Starts with either http or https
+        String[] scheme = {"http://","https://"};
+        if (!arg.contains(scheme[0])){
+            if (!arg.contains(scheme[1])){
+                System.out.println(arg + " does not begin with http:// or https://, correct and try again");
+                System.exit(0);
+            }
+        }
+        return arg;
+    }
+
     private static void createURLSFile(Random random, PrintWriter printLine) {
         for(int i = 0; i < iterations; ++i) {
             String eventId = Integer.toString(random.nextInt(maxRandomId));
@@ -38,11 +52,13 @@ public class Main {
             System.out.println(uniqueURL);
             printLine.printf("%s%n", uniqueURL);
         }
-
     }
 
     private static String randomURL(String URL, int i) {
         String[] result = URL.split("\\s");
+        for (int j = 0; j < result.length; j++){
+            checkURLFormat(result[j]);
+        }
         Random number = new Random();
         return result[number.nextInt(i)];
     }
